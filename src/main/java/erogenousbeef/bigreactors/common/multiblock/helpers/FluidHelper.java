@@ -146,8 +146,13 @@ public abstract class FluidHelper implements IConditionalUpdater {
 	}
 	
 	protected int getFluidAmount(int idx) {
-		if(fluids[idx] == null) { return 0; }
-		else { return fluids[idx].amount; }
+//		if(fluids[idx] == null) { return 0; }
+//		else { return fluids[idx].amount; }
+    if(idx == 0) {
+      return 0;
+    }else{
+      return Integer.MAX_VALUE;
+    }
 		
 	}
 	

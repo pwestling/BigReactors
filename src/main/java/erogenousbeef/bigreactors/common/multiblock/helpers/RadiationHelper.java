@@ -1,5 +1,6 @@
 package erogenousbeef.bigreactors.common.multiblock.helpers;
 
+import erogenousbeef.bigreactors.simulator.FakeWorld;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
@@ -37,7 +38,7 @@ public class RadiationHelper {
 	public static final ReactorInteriorData waterData = new ReactorInteriorData(0.33f, 0.5f, 1.33f, IHeatEntity.conductivityWater);
 
 	private float fertility;
-	
+
 	public RadiationHelper() {
 		fertility = 1f;
 	}
@@ -54,13 +55,13 @@ public class RadiationHelper {
 		double radiationPenaltyBase = Math.exp(-15*Math.exp(-0.0025*fuelHeat));
 
 		// Raw amount - what's actually in the tanks
-		// Effective amount - how 
+		// Effective amount - how
 		int baseFuelAmount = fuelContainer.getFuelAmount() + (fuelContainer.getWasteAmount() / 100);
 		float fuelReactivity = fuelContainer.getFuelReactivity();
-		
+
 		// Intensity = how strong the radiation is, hardness = how energetic the radiation is (penetration)
 		float rawRadIntensity = (float)baseFuelAmount * fissionEventsPerFuelUnit;
-		
+
 		// Scale up the "effective" intensity of radiation, to provide an incentive for bigger reactors in general.
 		float scaledRadIntensity = (float) Math.pow((rawRadIntensity), fuelReactivity);
 
@@ -87,7 +88,7 @@ public class RadiationHelper {
 		// Propagate radiation to others
 		CoordTriplet originCoord = source.getWorldLocation();
 		CoordTriplet currentCoord = new CoordTriplet(0, 0, 0);
-		
+
 		effectiveRadIntensity *= 0.25f; // We're going to do this four times, no need to repeat
 		RadiationPacket radPacket = new RadiationPacket();
 
@@ -107,22 +108,22 @@ public class RadiationHelper {
 		// Apply changes
 		fertility += data.fuelAbsorbedRadiation;
 		data.fuelAbsorbedRadiation = 0f;
-		
+
 		// Inform fuelContainer
 		fuelContainer.onRadiationUsesFuel(rawFuelUsage);
 		data.fuelUsage = rawFuelUsage;
-		
+
 		return data;
 	}
-	
+
 	public void tick(boolean active) {
 		float denominator = 20f;
 		if(!active) { denominator *= 200f; } // Much slower decay when off
-		
+
 		// Fertility decay, at least 0.1 rad/t, otherwise halve it every 10 ticks
 		fertility = Math.max(0f, fertility - Math.max(0.1f, fertility/denominator));
 	}
-	
+
 	private void performIrradiation(World world, RadiationData data, RadiationPacket radiation, int x, int y, int z) {
 		TileEntity te = world.getTileEntity(x, y, z);
 		if(te instanceof IRadiationModerator) {
@@ -134,7 +135,7 @@ public class RadiationHelper {
 		else {
 			Block block = world.getBlock(x, y, z);
 			if(block != null) {
-				
+
 				if(block instanceof IFluidBlock) {
 					moderateByFluid(data, radiation, ((IFluidBlock)block).getFluid());
 				}
@@ -150,11 +151,11 @@ public class RadiationHelper {
 			// Do it based on fluid?
 		}
 	}
-	
+
 	private void moderateByAir(RadiationData data, RadiationPacket radiation) {
 		applyModerationFactors(data, radiation, airData);
 	}
-	
+
 	private void moderateByBlock(RadiationData data, RadiationPacket radiation, Block block, int metadata) {
 		ReactorInteriorData moderatorData = null;
 
@@ -174,35 +175,35 @@ public class RadiationHelper {
 			// Check the ore dictionary.
 			moderatorData = ReactorInterior.getBlockData(ItemHelper.oreProxy.getOreName(new ItemStack(block, 1, metadata)));
 		}
-		
+
 		if(moderatorData == null) {
 			moderatorData = airData;
 		}
 
 		applyModerationFactors(data, radiation, moderatorData);
 	}
-	
+
 	private void moderateByFluid(RadiationData data, RadiationPacket radiation, Fluid fluid) {
-		
+
 		float absorption, heatEfficiency, moderation;
 		String name = fluid.getName();
 
 		ReactorInteriorData moderatorData = ReactorInterior.getFluidData(fluid.getName());
-		
+
 		if(moderatorData == null) {
 			moderatorData = waterData;
 		}
 
 		applyModerationFactors(data, radiation, moderatorData);
 	}
-	
+
 	private static void applyModerationFactors(RadiationData data, RadiationPacket radiation, ReactorInteriorData moderatorData) {
 		float radiationAbsorbed = radiation.intensity * moderatorData.absorption * (1f - radiation.hardness);
 		radiation.intensity = Math.max(0f, radiation.intensity - radiationAbsorbed);
 		radiation.hardness /= moderatorData.moderation;
 		data.environmentRfChange += moderatorData.heatEfficiency * radiationAbsorbed * rfPerRadiationUnit;
 	}
-	
+
 	// Data Access
 	public float getFertility() { return fertility; }
 
@@ -231,12 +232,12 @@ public class RadiationHelper {
 			setFertility(data.getFloat("fertility"));
 		}
 	}
-	
+
 	public NBTTagCompound writeToNBT(NBTTagCompound data) {
 		data.setFloat("fertility", fertility);
 		return data;
 	}
-	
+
 	public void merge(RadiationHelper other) {
 		fertility = Math.max(fertility, other.fertility);
 	}

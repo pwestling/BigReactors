@@ -95,7 +95,6 @@ public class CoolantContainer extends FluidHelper {
 	
 	public float getCoolantTemperature(float reactorTemperature) {
 		Fluid coolantType = getCoolantType();
-		if(coolantType == null || getFluidAmount(COLD) <= 0) { return reactorTemperature; }
 
 		return Math.min(reactorTemperature, getBoilingPoint(coolantType));
 	}
@@ -125,28 +124,28 @@ public class CoolantContainer extends FluidHelper {
 		if(mbVaporized < 1) { return rfAbsorbed; }
 
 		// Make sure we either have an empty vapor chamber or the vapor types match
-		Fluid newVaporType = getVaporizedCoolantFluid(coolantType);
-		if(newVaporType == null) {
-			BRLog.warning("Coolant in tank (%s) has no registered vapor type!", coolantType.getName());
-			return rfAbsorbed;
-		}
-		
-		Fluid existingVaporType = getVaporType();
-		if(existingVaporType != null && !newVaporType.getName().equals(existingVaporType.getName())) {
-			// Can't vaporize anything with incompatible vapor in the vapor tank
-			return rfAbsorbed;
-		}
+//		Fluid newVaporType = getVaporizedCoolantFluid(coolantType);
+//		if(newVaporType == null) {
+//			BRLog.warning("Coolant in tank (%s) has no registered vapor type!", coolantType.getName());
+//			return rfAbsorbed;
+//		}
+//
+//		Fluid existingVaporType = getVaporType();
+//		if(existingVaporType != null && !newVaporType.getName().equals(existingVaporType.getName())) {
+//			// Can't vaporize anything with incompatible vapor in the vapor tank
+//			return rfAbsorbed;
+//		}
 		
 		// Vaporize! -- POINT OF NO RETURN
 		fluidVaporizedLastTick = mbVaporized;
 		this.drainCoolant(mbVaporized);
 		
-		if(existingVaporType != null) {
-			addFluidToStack(HOT, mbVaporized);
-		}
-		else {
-			fill(HOT, new FluidStack(newVaporType, mbVaporized), true);
-		}
+//		if(existingVaporType != null) {
+//			addFluidToStack(HOT, mbVaporized);
+//		}
+//		else {
+//			fill(HOT, new FluidStack(newVaporType, mbVaporized), true);
+//		}
 		
 		// Calculate how much we actually absorbed via vaporization
 		float energyConsumed = (float)mbVaporized * heatOfVaporization;
@@ -156,7 +155,7 @@ public class CoolantContainer extends FluidHelper {
 	}
 	
 	private float getBoilingPoint(Fluid fluid) {
-		if(fluid == null) { throw new IllegalArgumentException("Cannot pass a null fluid to getBoilingPoint"); } // just in case
+	//	if(fluid == null) { throw new IllegalArgumentException("Cannot pass a null fluid to getBoilingPoint"); } // just in case
 
 		// TODO: Lookup
 		return 100f;
@@ -167,14 +166,12 @@ public class CoolantContainer extends FluidHelper {
 	 * @return
 	 */
 	private float getHeatOfVaporization(Fluid fluid) {
-		if(fluid == null) { throw new IllegalArgumentException("Cannot pass a null fluid to getHeatOfVaporization"); } // just in case
 
 		// TODO: Make a registry for this, do a lookup
 		return 4f; // TE converts 1mB steam into 2 RF of work in a steam turbine, so we assume it's 50% efficient.
 	}
 	
 	private Fluid getVaporizedCoolantFluid(Fluid fluid) {
-		if(fluid == null) { throw new IllegalArgumentException("Cannot pass a null fluid to getVaporizedCoolantFluid"); } // just in case
 
 		return BigReactors.fluidSteam;
 	}
