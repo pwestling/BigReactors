@@ -8,7 +8,6 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import com.google.common.collect.Lists;
-import org.apache.commons.lang3.StringUtils;
 
 public class ReactorGenetics {
 
@@ -133,9 +132,9 @@ public class ReactorGenetics {
     }
   }
 
-  public ReactorGenome breedGoodReactor(int startingPopulation, int generations){
+  public ReactorGenome breedGoodReactor(int startingPopulation, int generations, boolean activelyCooled){
     BigReactorSimulator simulator = new BigReactorSimulator();
-    simulator.init(true);
+    simulator.init(activelyCooled);
 
     List<ReactorGenome> population = Lists.newArrayList();
     for (int i = 0; i < startingPopulation; i++) {
@@ -158,7 +157,7 @@ public class ReactorGenetics {
 
     ReactorGenetics genetics = new ReactorGenetics(13, 13, 13);
     System.out.println("Starting simulation...");
-    ReactorGenome reactorGenome = genetics.breedGoodReactor(2000, 20);
+    ReactorGenome reactorGenome = genetics.breedGoodReactor(2000, 20, true);
     genetics.display(reactorGenome.reactor);
     System.out.println(reactorGenome.result);
 

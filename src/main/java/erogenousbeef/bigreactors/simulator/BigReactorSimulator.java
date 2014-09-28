@@ -12,6 +12,16 @@ public class BigReactorSimulator {
 
   private boolean activelyCooled;
 
+  private static final String OUR_10X10 =
+      "E E E E E E E E" +
+          "E E X E E X E E" +
+          "E X X X X X X E" +
+          "E E X D D X E E" +
+          "E E X D D X E E" +
+          "E X X X X X X E" +
+          "E E X E E X E E" +
+          "E E E E E E E E";
+
   public BigReactorSimulator init(boolean activelyCooled) {
     this.activelyCooled = activelyCooled;
     BlockBRMetal blockMetal = new BlockBRMetal();
@@ -71,7 +81,6 @@ public class BigReactorSimulator {
   }
 
   public ReactorResult simulate(FakeReactorWorld world, int ticks) {
-    activelyCooled = true;
     MultiblockReactorSimulator simulator = new MultiblockReactorSimulator(world, "yellorium", activelyCooled);
     for (int i = 0; i < ticks; i++) {
       simulator.updateServer();
@@ -115,23 +124,24 @@ public class BigReactorSimulator {
   public static void main(String[] args) {
 
     String reactor =
-    "E E C E C C E C C E E E E"+
-    "C C E C C C C C E C C E E"+
-    "C C C C C E C C E C E C C"+
-    "E C C C C E C E X X C X C"+
-    "C C E E E E C C C C C E C"+
-    "E E C C X X C X C E C E E"+
-    "C C X X C X E C C E C C C"+
-    "C C C X C C E E C E C X C"+
-    "X C C C E C C E C E X C X"+
-    "C C C E E E E C C C C C C"+
-    "C E C E C C C C C C E E E"+
-    "E C C C C C E C C C C E C"+
-    "E E E C E E E C C C E C E";
+        "E E C E C C E C C E E E E" +
+            "C C E C C C C C E C C E E" +
+            "C C C C C E C C E C E C C" +
+            "E C C C C E C E X X C X C" +
+            "C C E E E E C C C C C E C" +
+            "E E C C X X C X C E C E E" +
+            "C C X X C X E C C E C C C" +
+            "C C C X C C E E C E C X C" +
+            "X C C C E C C E C E X C X" +
+            "C C C E E E E C C C C C C" +
+            "C E C E C C C C C C E E E" +
+            "E C C C C C E C C C C E C" +
+            "E E E C E E E C C C E C E";
 
-   // reactor = reactor.replaceAll("X C", "C X");
-    FakeReactorWorld fakeReactorWorld = new ReactorGenetics(13, 13, 13).makeReactor(reactor);
-    ReactorResult simulate = new BigReactorSimulator().init(false).simulate(fakeReactorWorld, 2000);
+    // reactor = reactor.replaceAll("X C", "C X");
+    FakeReactorWorld fakeReactorWorld = new ReactorGenetics(10, 10, 10).makeReactor(OUR_10X10);
+    ReactorResult simulate = new BigReactorSimulator().init(true).simulate(fakeReactorWorld, 2000);
+    System.out.println(simulate);
 
   }
 
