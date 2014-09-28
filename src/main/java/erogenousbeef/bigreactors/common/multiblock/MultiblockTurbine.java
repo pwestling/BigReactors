@@ -68,12 +68,12 @@ public class MultiblockTurbine extends RectangularMultiblockControllerBase imple
 	public static final int TANK_OUTPUT = 1;
 	public static final int NUM_TANKS = 2;
 	public static final int FLUID_NONE = -1;
-	public static final int TANK_SIZE = 4000;
-	public static final int MAX_PERMITTED_FLOW = 2000;
+	public static final int TANK_SIZE = 500000;
+	public static final int MAX_PERMITTED_FLOW = Integer.MAX_VALUE;
 
 	private FluidTank[] tanks;
 	
-	static final float maxEnergyStored = 1000000f; // 1 MegaRF
+	static final float maxEnergyStored = 10000000f; // 1 MegaRF
 	
 	// Persistent game data
 	float energyStored;
