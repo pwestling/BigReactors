@@ -3,7 +3,6 @@ package erogenousbeef.bigreactors.simulator;
 import erogenousbeef.bigreactors.api.IHeatEntity;
 import erogenousbeef.bigreactors.api.registry.ReactorConversions;
 import erogenousbeef.bigreactors.api.registry.ReactorInterior;
-import erogenousbeef.bigreactors.common.block.BlockBRMetal;
 import erogenousbeef.bigreactors.common.data.StandardReactants;
 import erogenousbeef.bigreactors.common.multiblock.helpers.RadiationHelper;
 
@@ -21,11 +20,14 @@ public class BigReactorSimulator {
           "E X X X X X X E" +
           "E E X E E X E E" +
           "E E E E E E E E";
+  private int ticks;
 
-  public BigReactorSimulator init(boolean activelyCooled) {
+  public BigReactorSimulator(boolean activelyCooled, int ticks) {
     this.activelyCooled = activelyCooled;
-    BlockBRMetal blockMetal = new BlockBRMetal();
-    //    blockMetal.registerOreDictEntries();
+    this.ticks = ticks;
+  }
+
+  public static void init() {
 
     ReactorInterior.registerBlock("blockIron", 0.50f, 0.75f, 1.40f, IHeatEntity.conductivityIron);
     ReactorInterior.registerBlock("blockGold", 0.52f, 0.80f, 1.45f, IHeatEntity.conductivityGold);
@@ -77,12 +79,12 @@ public class BigReactorSimulator {
     //
     //    ItemStack blockBlutonium = blockMetal.getItemStackForMaterial("Blutonium");
     //    Reactants.registerSolid(blockBlutonium, StandardReactants.blutonium, Reactants.standardSolidReactantAmount * 9);
-    return this;
   }
 
-  public ReactorResult simulate(FakeReactorWorld world, int ticks) {
+  public ReactorResult simulate(FakeReactorWorld world) {
     MultiblockReactorSimulator simulator = new MultiblockReactorSimulator(world, "yellorium", activelyCooled);
-    for (int i = 0; i < ticks; i++) {
+    this.ticks = ticks;
+    for (int i = 0; i < this.ticks; i++) {
       simulator.updateServer();
     }
     //    System.out.println("Energy Created: " + String.format("%.2f flux per tick", simulator.getEnergyGeneratedLastTick()));
@@ -93,7 +95,8 @@ public class BigReactorSimulator {
     //    System.out.println("Fuel temp: "+simulator.getFuelHeat());
     //    System.out.println("Reactor temp: "+simulator.getReactorHeat());
 
-    return new ReactorResult(simulator.getEnergyGeneratedLastTick() / simulator.getFuelConsumedLastTick(), simulator.getEnergyGeneratedLastTick(), simulator.getCoolantContainer().getFluidVaporizedLastTick());
+    return new ReactorResult(simulator.getEnergyGeneratedLastTick() / simulator.getFuelConsumedLastTick(),
+        simulator.getEnergyGeneratedLastTick(), world.getNumRods());
 
 
   }
@@ -102,13 +105,12 @@ public class BigReactorSimulator {
 
     public final double efficiency;
     public final double output;
-    public final double steam;
+    public final int numRods;
 
-
-    public ReactorResult(double efficiency, double output, double steam) {
+    public ReactorResult(double efficiency, double output, int numRods) {
       this.efficiency = efficiency;
       this.output = output;
-      this.steam = steam;
+      this.numRods = numRods;
     }
 
     @Override
@@ -116,31 +118,32 @@ public class BigReactorSimulator {
       return "ReactorResult{" +
           "efficiency=" + efficiency +
           ", output=" + output +
-          ", steam=" + steam +
+          ", numRods=" + numRods +
           '}';
     }
   }
 
   public static void main(String[] args) {
-
+    BigReactorSimulator.init();
     String reactor =
-        "E E C E C C E C C E E E E" +
-            "C C E C C C C C E C C E E" +
-            "C C C C C E C C E C E C C" +
-            "E C C C C E C E X X C X C" +
-            "C C E E E E C C C C C E C" +
-            "E E C C X X C X C E C E E" +
-            "C C X X C X E C C E C C C" +
-            "C C C X C C E E C E C X C" +
-            "X C C C E C C E C E X C X" +
-            "C C C E E E E C C C C C C" +
-            "C E C E C C C C C C E E E" +
-            "E C C C C C E C C C C E C" +
-            "E E E C E E E C C C E C E";
+            "C C C C C C C C C C C C C" +
+            "C C C C C C C C C C C C C" +
+            "C C C C C C C C C C C C C" +
+            "C C C C C C C C C C C C C" +
+            "C C C C C C C C C C C C C" +
+            "C C C C C X G X C C C C C" +
+            "C C C C C G C G C C C C C" +
+            "C C C C C X G X C C C C C" +
+            "C C C C C C C C C C C C C" +
+            "C C C C C C C C C C C C C" +
+            "C C C C C C C C C C C C C" +
+            "C C C C C C C C C C C C C" +
+            "C C C C C C C C C C C C C";
 
-    // reactor = reactor.replaceAll("X C", "C X");
-    FakeReactorWorld fakeReactorWorld = new ReactorGenetics(10, 10, 10).makeReactor(OUR_10X10);
-    ReactorResult simulate = new BigReactorSimulator().init(true).simulate(fakeReactorWorld, 2000);
+    ReactorGenetics genetics = new ReactorGenetics(15, 15, 32);
+    FakeReactorWorld fakeReactorWorld = genetics.makeReactor(reactor);
+    ReactorResult simulate = new BigReactorSimulator(false, 5000).simulate(fakeReactorWorld);
+    genetics.display(reactor);
     System.out.println(simulate);
 
   }

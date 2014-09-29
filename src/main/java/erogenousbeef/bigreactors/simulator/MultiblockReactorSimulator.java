@@ -388,6 +388,10 @@ public class MultiblockReactorSimulator implements IEnergyHandler, IReactorFuelI
       tickable.onMultiblockServerTick();
     }
 
+    this.fuelContainer.addFuel("yellorium", Integer.MAX_VALUE, true);
+    this.fuelContainer.dumpWaste();
+
+
     return (oldHeat != this.getReactorHeat() || oldEnergy != this.getEnergyStored());
   }
 

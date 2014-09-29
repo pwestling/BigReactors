@@ -43,6 +43,8 @@ public class ReactorParser {
         return "block:blockDiamond";
       case 'P':
         return "fluid:pyrotheum";
+      case 'G':
+        return "block:blockGraphite";
     }
     return null;
   }
