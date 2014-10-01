@@ -155,8 +155,9 @@ public class ReactorGenetics {
     fitness(genomes, simulator, evaluator);
     Collections.sort(genomes);
     ReactorGenome best = genomes.get(genomes.size() - 1);
-    //System.out.println("Best: " + best.result);
-    //System.out.println("Fitness: " + evaluator.eval(best.result));
+    display(best.reactor);
+    System.out.println("Best: " + best.result);
+    System.out.println("Fitness: " + evaluator.eval(best.result));
 
     selectionFactor = 0.20;
     int toTake = (int)(genomes.size() * selectionFactor);
@@ -218,7 +219,7 @@ public class ReactorGenetics {
     for (int i = 0; i < generations; i++) {
       List<ReactorGenome> selected = select(population, simulator, evaluator);
       population = generation(selected, startingPopulation);
-      //System.out.println("Gen: " + i);
+      System.out.println("Gen: " + i);
     }
 
     fitness(population, simulator, evaluator);
@@ -257,6 +258,13 @@ public class ReactorGenetics {
       @Override
       public double eval(BigReactorSimulator.ReactorResult result) {
         return result.output*result.efficiency;
+      }
+    });
+
+    evaluatorMap.put("nim", new Evaluator() {
+      @Override
+      public double eval(BigReactorSimulator.ReactorResult result) {
+        return result.output > 20000 ? result.efficiency : result.output/100;
       }
     });
 

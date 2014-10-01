@@ -140,9 +140,10 @@ public class BigReactorSimulator {
             "C C C C C C C C C C C C C" +
             "C C C C C C C C C C C C C";
 
-    ReactorGenetics genetics = new ReactorGenetics(15, 15, 32);
+
+    ReactorGenetics genetics = new ReactorGenetics(15, 15, 30);
     FakeReactorWorld fakeReactorWorld = genetics.makeReactor(reactor);
-    ReactorResult simulate = new BigReactorSimulator(false, 5000).simulate(fakeReactorWorld);
+    ReactorResult simulate = new BigReactorSimulator(true, 5000).simulate(fakeReactorWorld);
     genetics.display(reactor);
     System.out.println(simulate);
 
