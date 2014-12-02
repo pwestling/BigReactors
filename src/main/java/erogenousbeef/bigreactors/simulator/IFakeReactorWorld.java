@@ -6,7 +6,7 @@ import erogenousbeef.core.common.CoordTriplet;
 import net.minecraft.block.Block;
 import net.minecraft.tileentity.TileEntity;
 
-public interface FakeWorld {
+public interface IFakeReactorWorld {
 
   public TileEntity getTileEntity(int x, int y, int z);
 
@@ -19,4 +19,8 @@ public interface FakeWorld {
   CoordTriplet getMinCoord();
 
   List<TileEntity> getParts();
+
+  int getNumRods();
+
+  String display();
 }

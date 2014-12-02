@@ -39,8 +39,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidRegistry;
-import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidBlock;
 
@@ -78,7 +76,7 @@ public class MultiblockReactorSimulator implements IEnergyHandler, IReactorFuelI
   private CoordTriplet minCoord;
   public CoordTriplet maxCoord;
   private Set connectedParts = Sets.newHashSet();
-  private FakeWorld worldObj;
+  private IFakeReactorWorld worldObj;
 
   public enum WasteEjectionSetting {
     kAutomatic,          // Full auto, always remove waste
@@ -106,7 +104,7 @@ public class MultiblockReactorSimulator implements IEnergyHandler, IReactorFuelI
   private static final int ticksBetweenUpdates = 3;
   private static final int maxEnergyStored = 10000000;
 
-  public MultiblockReactorSimulator(FakeWorld world, String fuel, boolean activelyCooled) {
+  public MultiblockReactorSimulator(IFakeReactorWorld world, String fuel, boolean activelyCooled) {
 
     // Game stuff
     active = false;

@@ -1,7 +1,6 @@
 package erogenousbeef.bigreactors.simulator;
 
 import erogenousbeef.bigreactors.api.IHeatEntity;
-import erogenousbeef.bigreactors.api.IRadiationModerator;
 import erogenousbeef.bigreactors.api.data.ReactorInteriorData;
 import erogenousbeef.bigreactors.api.registry.ReactorInterior;
 import erogenousbeef.bigreactors.common.BigReactors;
@@ -14,7 +13,6 @@ import erogenousbeef.core.common.CoordTriplet;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
-import org.apache.commons.lang3.StringUtils;
 
 /**
  * Helper for reactor radiation game logic
@@ -36,7 +34,7 @@ public class RadiationHelperSimulator {
     fertility = 1f;
   }
 
-  public RadiationData radiate(FakeWorld world, FuelContainer fuelContainer, TileEntityReactorFuelRodSimulator source, TileEntityReactorControlRod controlRod, float fuelHeat, float environmentHeat, int numControlRods, MultiblockReactorSimulator simulator) {
+  public RadiationData radiate(IFakeReactorWorld world, FuelContainer fuelContainer, TileEntityReactorFuelRodSimulator source, TileEntityReactorControlRod controlRod, float fuelHeat, float environmentHeat, int numControlRods, MultiblockReactorSimulator simulator) {
     // No fuel? No radiation!
     if (fuelContainer.getFuelAmount() <= 0) {
       return null;
@@ -121,7 +119,7 @@ public class RadiationHelperSimulator {
     fertility = Math.max(0f, fertility - Math.max(0.1f, fertility / denominator));
   }
 
-  private void performIrradiation(FakeWorld world, MultiblockReactorSimulator simulator, RadiationData data, RadiationPacket radiation, int x, int y, int z) {
+  private void performIrradiation(IFakeReactorWorld world, MultiblockReactorSimulator simulator, RadiationData data, RadiationPacket radiation, int x, int y, int z) {
     TileEntity te = world.getTileEntity(x, y, z);
     if (te instanceof IRadiationModeratorSimulator) {
       ((IRadiationModeratorSimulator)te).moderateRadiation(data, radiation, world, simulator);

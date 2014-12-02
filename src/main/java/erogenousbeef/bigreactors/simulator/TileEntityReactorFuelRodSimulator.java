@@ -5,14 +5,12 @@ import erogenousbeef.bigreactors.api.data.ReactorInteriorData;
 import erogenousbeef.bigreactors.api.registry.ReactorInterior;
 import erogenousbeef.bigreactors.common.data.RadiationData;
 import erogenousbeef.bigreactors.common.data.RadiationPacket;
-import erogenousbeef.bigreactors.common.multiblock.MultiblockReactor;
 import erogenousbeef.bigreactors.common.multiblock.helpers.RadiationHelper;
 import erogenousbeef.bigreactors.common.multiblock.tileentity.TileEntityReactorControlRod;
 import erogenousbeef.bigreactors.common.multiblock.tileentity.TileEntityReactorPartBase;
 import erogenousbeef.bigreactors.utils.StaticUtils;
 import erogenousbeef.core.multiblock.MultiblockValidationException;
 import erogenousbeef.core.multiblock.rectangular.RectangularMultiblockTileEntityBase;
-import net.minecraft.block.Block;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
 
@@ -24,7 +22,7 @@ public class TileEntityReactorFuelRodSimulator extends TileEntityReactorPartBase
 
   // IRadiationModerator
   @Override
-  public void moderateRadiation(RadiationData data, RadiationPacket radiation, FakeWorld world, MultiblockReactorSimulator reactor) {
+  public void moderateRadiation(RadiationData data, RadiationPacket radiation, IFakeReactorWorld world, MultiblockReactorSimulator reactor) {
     // Grab control rod insertion and reactor heat
     float heat = reactor.getFuelHeat();
 
@@ -143,7 +141,7 @@ public class TileEntityReactorFuelRodSimulator extends TileEntityReactorPartBase
    *
    * @return Heat transfer rate from fuel rod to reactor environment, in Centigrade per tick.
    */
-  public float getHeatTransferRate(FakeWorld world) {
+  public float getHeatTransferRate(IFakeReactorWorld world) {
     float heatTransferRate = 0f;
 
     TileEntity te;

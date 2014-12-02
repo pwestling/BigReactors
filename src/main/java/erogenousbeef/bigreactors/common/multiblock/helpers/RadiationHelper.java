@@ -1,6 +1,5 @@
 package erogenousbeef.bigreactors.common.multiblock.helpers;
 
-import erogenousbeef.bigreactors.simulator.FakeWorld;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;

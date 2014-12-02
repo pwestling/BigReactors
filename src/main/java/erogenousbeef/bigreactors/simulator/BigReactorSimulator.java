@@ -3,6 +3,7 @@ package erogenousbeef.bigreactors.simulator;
 import erogenousbeef.bigreactors.api.IHeatEntity;
 import erogenousbeef.bigreactors.api.registry.ReactorConversions;
 import erogenousbeef.bigreactors.api.registry.ReactorInterior;
+import erogenousbeef.bigreactors.api.registry.TurbineCoil;
 import erogenousbeef.bigreactors.common.data.StandardReactants;
 import erogenousbeef.bigreactors.common.multiblock.helpers.RadiationHelper;
 
@@ -71,6 +72,37 @@ public class BigReactorSimulator {
     ReactorConversions.register(StandardReactants.yellorium, StandardReactants.cyanite);
     ReactorConversions.register(StandardReactants.blutonium, StandardReactants.cyanite);
 
+    TurbineCoil.registerBlock("blockIron", 1f, 1f, 1f);
+    TurbineCoil.registerBlock("blockGold", 2f, 1f, 1.75f);
+
+    TurbineCoil.registerBlock("blockCopper", 1.2f, 1f, 1.2f);  // TE, lots of mods
+    TurbineCoil.registerBlock("blockOsmium", 1.2f, 1f, 1.2f);  // Mekanism
+    TurbineCoil.registerBlock("blockZinc", 1.35f, 1f, 1.3f);
+    TurbineCoil.registerBlock("blockLead", 1.35f, 1.01f, 1.3f);// TE, Mekanism, some others
+    TurbineCoil.registerBlock("blockBrass", 1.4f, 1f, 1.2f);  // Metallurgy
+    TurbineCoil.registerBlock("blockBronze", 1.4f, 1f, 1.2f);  // Mekanism, many others
+    TurbineCoil.registerBlock("blockAluminum", 1.5f, 1f, 1.3f);  // TiCo, couple others
+    TurbineCoil.registerBlock("blockSteel", 1.5f, 1f, 1.3f);  // Metallurgy, Mek, etc.
+    TurbineCoil.registerBlock("blockInvar", 1.5f, 1f, 1.4f);  // TE
+    TurbineCoil.registerBlock("blockSilver", 1.7f, 1f, 1.5f);  // TE, lots of mods
+    TurbineCoil.registerBlock("blockElectrum", 2.5f, 1f, 2.0f);  // TE, lots of mods
+    TurbineCoil.registerBlock("blockElectrumFlux", 2.5f, 1.01f, 2.2f);  // Redstone Arsenal, note small energy bonus (7% at 1000RF/t output)
+    TurbineCoil.registerBlock("blockPlatinum", 3.0f, 1f, 2.5f);  // TE, lots of mods
+    TurbineCoil.registerBlock("blockShiny", 3.0f, 1f, 2.5f);  // TE
+    TurbineCoil.registerBlock("blockTitanium", 3.1f, 1f, 2.7f);  // Mariculture
+    TurbineCoil.registerBlock("blockEnderium", 3.0f, 1.02f, 3.0f);  // TE, note tiny energy bonus!	(14% at 1000RF/t output)
+
+    TurbineCoil.registerBlock("blockLudicrite", 3.5f, 1.02f, 3.5f);
+
+    // Metallurgy fantasy metals
+    TurbineCoil.registerBlock("blockMithril", 2.2f, 1f, 1.5f);
+    TurbineCoil.registerBlock("blockOrichalcum", 2.3f, 1f, 1.7f);
+    TurbineCoil.registerBlock("blockQuicksilver", 2.6f, 1f, 1.8f);
+    TurbineCoil.registerBlock("blockHaderoth", 3.0f, 1f, 2.0f);
+    TurbineCoil.registerBlock("blockCelenegil", 3.3f, 1f, 2.25f);
+    TurbineCoil.registerBlock("blockTartarite", 3.5f, 1f, 2.5f);
+    TurbineCoil.registerBlock("blockManyullyn", 3.5f, 1f, 2.5f);
+
     //    StandardReactants.yelloriumMapping = Reactants.registerSolid("ingotYellorium", StandardReactants.yellorium);
     //    StandardReactants.cyaniteMapping = Reactants.registerSolid("ingotCyanite", StandardReactants.cyanite);
     //
@@ -81,7 +113,7 @@ public class BigReactorSimulator {
     //    Reactants.registerSolid(blockBlutonium, StandardReactants.blutonium, Reactants.standardSolidReactantAmount * 9);
   }
 
-  public ReactorResult simulate(FakeReactorWorld world) {
+  public ReactorResult simulate(IFakeReactorWorld world) {
     MultiblockReactorSimulator simulator = new MultiblockReactorSimulator(world, "yellorium", activelyCooled);
     this.ticks = ticks;
     for (int i = 0; i < this.ticks; i++) {
@@ -126,7 +158,7 @@ public class BigReactorSimulator {
   public static void main(String[] args) {
     BigReactorSimulator.init();
     String reactor =
-            "C C C C C C C C C C C C C" +
+        "C C C C C C C C C C C C C" +
             "C C C C C C C C C C C C C" +
             "C C C C C C C C C C C C C" +
             "C C C C C C C C C C C C C" +
@@ -141,11 +173,16 @@ public class BigReactorSimulator {
             "C C C C C C C C C C C C C";
 
 
-    ReactorGenetics genetics = new ReactorGenetics(15, 15, 30);
-    FakeReactorWorld fakeReactorWorld = genetics.makeReactor(reactor);
-    ReactorResult simulate = new BigReactorSimulator(true, 5000).simulate(fakeReactorWorld);
-    genetics.display(reactor);
+            FakeReactorWorld fakeReactorWorld = new ReactorGenetics(15, 15, 10).makeReactor(reactor);
+
+    ReactorResult simulate = new BigReactorSimulator(false, 10000).simulate(fakeReactorWorld);
     System.out.println(simulate);
+    System.out.println("Small turbines: " + simulate.output / 2000.0);
+    System.out.println("Big turbines: " + simulate.output / 32000.0);
+    System.out.println("Energy final: " + (simulate.output / 2000.0) * 20791);
+
+
+    // System.out.println(MultiblockTurbineSimulator.simulateServer(2000, 20, 4, "blockEnderium", 4, 1800,0));
 
   }
 
